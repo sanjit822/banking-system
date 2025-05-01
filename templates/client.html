@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Client - Bank</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial;
+      margin: 0;
+      padding: 0;
+      transition: background 0.3s, color 0.3s;
+    }
+    header {
+      background: navy;
+      color: white;
+      padding: 10px;
+      text-align: center;
+    }
+    nav {
+      background-color: #f2f2f2;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 10px;
+    }
+    nav a {
+      text-decoration: none;
+      color: navy;
+      font-weight: bold;
+    }
+    #carousel {
+      position: relative;
+      width: 100%;
+      height: 250px;
+      overflow: hidden;
+    }
+    #carousel img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      display: none;
+    }
+    #carousel img.active {
+      display: block;
+    }
+    section {
+      padding: 20px;
+      text-align: center;
+    }
+    .dark-mode {
+      background: #121212;
+      color: white;
+    }
+    button {
+      margin: 10px;
+      padding: 8px 16px;
+      background-color: navy;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .feature-card {
+      width: 300px;
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .dark-mode .feature-card {
+      background: #1e1e1e;
+      color: white;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+    }
+    #chart-container {
+      max-width: 600px;
+      margin: auto;
+    }
+    @media screen and (max-width: 600px) {
+      nav {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1 id="welcome">Welcome to Client Page</h1>
+  </header>
+
+  <nav>
+    <a href="/">Home</a>
+    <a href="/about">About</a>
+    <a href="/admin">Admin</a>
+    <a href="/client">Client</a>
+    <a href="/complaint">Complaint</a>
+    <a href="/deposit">Deposit</a>
+    <a href="/history">History</a>
+    <a href="/login">Login</a>
+    <a href="/services">Services</a>
+    <a href="/withdraw">Withdraw</a>
+    <a href="/contact">Contact</a>
+  </nav>
+
+  <!-- Image Carousel -->
+  <div id="carousel">
+    <img src="static/images/client1.png" class="active" alt="Image 1">
+    <img src="static/images/client2.png" class="active" alt="Image 2">
+    <img src="static/images/client3.png" class="active" alt="Image 3">
+  </div>
+
+  <section>
+    <p>Welcome to your personal banking dashboard. Manage your finances, view stats, and much more.</p>
+    <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+  </section>
+
+  <section class="features">
+    <div class="feature-card">
+      <h3>Check Balance</h3>
+      <p>View your current account balance in real-time.</p>
+      <button onclick="alert('🔐 Balance: ₹98,452.00')">Check Now</button>
+    </div>
+
+    <div class="feature-card">
+      <h3>Transfer Money</h3>
+      <p>Send money securely to any bank account.</p>
+      <button onclick="alert('🔐 Transfer successful!')">Transfer</button>
+    </div>
+
+    <div class="feature-card">
+      <h3>Transaction History</h3>
+      <p>Access your recent transactions.</p>
+      <button onclick="window.location.href='/history'">View History</button>
+    </div>
+
+    <div class="feature-card">
+      <h3>Deposit Funds</h3>
+      <p>Add funds to your account.</p>
+      <button onclick="window.location.href='/deposit'">Deposit</button>
+    </div>
+
+    <div class="feature-card">
+      <h3>Withdraw Funds</h3>
+      <p>Withdraw from your account.</p>
+      <button onclick="window.location.href='/withdraw'">Withdraw</button>
+    </div>
+
+    <div class="feature-card">
+      <h3>Raise a Complaint</h3>
+      <p>Submit complaints or feedback.</p>
+      <button onclick="window.location.href='/complaint'">Raise Complaint</button>
+    </div>
+
+    <div class="feature-card">
+      <h3>Update Profile</h3>
+      <p>Update your personal details.</p>
+      <button onclick="alert('🔐 Profile updated!')">Update</button>
+    </div>
+
+    <div class="feature-card">
+      <h3>Download Statement</h3>
+      <p>Get a PDF of your transaction summary.</p>
+      <button onclick="alert('📄 PDF downloaded!')">Download</button>
+    </div>
+
+    <div class="feature-card">
+      <h3>Analytics</h3>
+      <p>See your monthly spending chart below.</p>
+      <button onclick="scrollToChart()">View Chart</button>
+    </div>
+
+    <div class="feature-card">
+      <h3>Schedule Payments</h3>
+      <p>Setup future bill payments or transfers.</p>
+      <button onclick="alert('📅 Payment scheduled!')">Schedule</button>
+    </div>
+
+    <div class="feature-card">
+      <h3>Support</h3>
+      <p>Contact our 24/7 support team.</p>
+      <button onclick="alert('📞 Connecting you to support...')">Contact Support</button>
+    </div>
+  </section>
+
+  <!-- Analytics Chart -->
+  <section id="chart-container">
+    <canvas id="spendingChart"></canvas>
+  </section>
+
+  <script>
+    let index = 0;
+    const images = document.querySelectorAll('#carousel img');
+    function showNextImage() {
+      images[index].classList.remove('active');
+      index = (index + 1) % images.length;
+      images[index].classList.add('active');
+    }
+    setInterval(showNextImage, 3000);
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+    }
+
+    const welcome = document.getElementById('welcome');
+    let welcomeText = welcome.textContent;
+    let i = 0;
+    function typeWelcome() {
+      if (i < welcomeText.length) {
+        welcome.innerHTML = welcomeText.slice(0, i + 1);
+        i++;
+        setTimeout(typeWelcome, 80);
+      }
+    }
+    welcome.innerHTML = '';
+    typeWelcome();
+
+    window.onload = () => {
+      setTimeout(() => {
+        alert("🔔 You are now viewing the Client Dashboard!");
+      }, 1000);
+    };
+
+    // Chart.js - Monthly Expense Chart
+    const ctx = document.getElementById('spendingChart').getContext('2d');
+    const spendingChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+        datasets: [{
+          label: 'Monthly Expenses (₹)',
+          data: [12000, 9000, 15000, 11000, 13000],
+          backgroundColor: 'rgba(0, 0, 128, 0.7)',
+          borderRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    function scrollToChart() {
+      document.getElementById('chart-container').scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+
+</body>
+</html>

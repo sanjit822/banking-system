@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us - Bank</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      transition: background 0.3s, color 0.3s;
+    }
+    header {
+      background: navy;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    nav {
+      background-color: #f2f2f2;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      padding: 12px;
+    }
+    nav a {
+      text-decoration: none;
+      color: navy;
+      font-weight: bold;
+    }
+    section, .contact-info, .map-section, .social-media, .faq-section, .newsletter {
+      padding: 30px 20px;
+      text-align: center;
+    }
+    .contact-form {
+      width: 90%;
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f9f9f9;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      border-radius: 10px;
+    }
+    .contact-form input, .contact-form textarea, .contact-form select {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    .contact-form button {
+      background-color: navy;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    .social-media a {
+      margin: 0 15px;
+      color: navy;
+      text-decoration: none;
+      font-size: 18px;
+    }
+    .chatbot-widget {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 320px;
+      height: 420px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 999;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .faq-item {
+      text-align: left;
+      margin: 10px auto;
+      max-width: 800px;
+      background: #f2f2f2;
+      border-radius: 5px;
+      padding: 10px 15px;
+      border-left: 5px solid navy;
+      cursor: pointer;
+    }
+    .faq-item p {
+      display: none;
+      margin-top: 8px;
+    }
+    .dark-mode {
+      background: #121212;
+      color: white;
+    }
+    .dark-mode nav {
+      background: #1e1e1e;
+    }
+    .dark-mode .contact-form {
+      background: #1e1e1e;
+      border: 1px solid #444;
+    }
+    .newsletter input[type="email"] {
+      padding: 10px;
+      width: 250px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .newsletter button {
+      padding: 10px 15px;
+      background: navy;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    @media (max-width: 600px) {
+      nav {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1 id="welcome">Contact Us</h1>
+    <button onclick="toggleDarkMode()">🌓 Toggle Dark Mode</button>
+  </header>
+
+  <nav>
+    <a href="/">Home</a>
+    <a href="/about">About</a>
+    <a href="/admin">Admin</a>
+    <a href="/client">Client</a>
+    <a href="/complaint">Complaint</a>
+    <a href="/deposit">Deposit</a>
+    <a href="/history">History</a>
+    <a href="/login">Login</a>
+    <a href="/services">Services</a>
+    <a href="/withdraw">Withdraw</a>
+    <a href="/contact">Contact</a>
+  </nav>
+
+  <!-- Contact Form -->
+  <section>
+    <h2>Get in Touch</h2>
+    <p>Need help? Fill the form and our team will contact you shortly.</p>
+    <img src="static/images/home2.png" alt="Contact Image" style="max-width: 100%; height: auto;" />
+    <div class="contact-form">
+      <form action="/submit-contact" method="POST" onsubmit="return validateForm()">
+        <input type="text" name="name" id="name" placeholder="Your Name" required>
+        <input type="email" name="email" id="email" placeholder="Your Email" required>
+        <select name="branch" required>
+          <option value="">Select Branch</option>
+          <option>Main Branch</option>
+          <option>City Center</option>
+          <option>Airport</option>
+        </select>
+        <textarea name="message" id="message" rows="5" placeholder="Your Message" required></textarea>
+        <button type="submit">Send Message</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Contact Info -->
+  <div class="contact-info">
+    <h2>Customer Support</h2>
+    <p>Email: <strong id="emailCopy">support@bank.com</strong> <button onclick="copyEmail()">📋 Copy</button></p>
+    <p>Phone: <strong>+123 456 789</strong></p>
+    <p>Office Address: 123 Bank Street, City, Country</p>
+    <p>Hours: Mon–Fri 9:00AM – 5:00PM</p>
+  </div>
+
+  <!-- Map -->
+  <div class="map-section">
+    <h2>Our Location</h2>
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18..." loading="lazy" allowfullscreen></iframe>
+  </div>
+
+  <!-- Social Media -->
+  <div class="social-media">
+    <h2>Connect With Us</h2>
+    <a href="https://facebook.com" target="_blank">Facebook</a>
+    <a href="https://twitter.com" target="_blank">Twitter</a>
+    <a href="https://linkedin.com" target="_blank">LinkedIn</a>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq-section">
+    <h2>FAQs</h2>
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <h4>What are your working hours?</h4>
+      <p>Monday to Friday: 9:00 AM – 5:00 PM</p>
+    </div>
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <h4>How can I reset my password?</h4>
+      <p>You can reset your password by visiting the login page and clicking “Forgot Password”.</p>
+    </div>
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <h4>Where can I find my branch's contact number?</h4>
+      <p>Each branch contact number is available in the branch locator dropdown or you can call support.</p>
+    </div>
+  </div>
+
+  <!-- Newsletter -->
+  <div class="newsletter">
+    <h2>Subscribe to our Newsletter</h2>
+    <form onsubmit="alert('Subscribed!'); return false;">
+      <input type="email" placeholder="Enter your email" required />
+      <button type="submit">Subscribe</button>
+    </form>
+  </div>
+
+  <!-- Chatbot -->
+  <div class="chatbot-widget">
+    <iframe src="https://www.botframework.com/chat"></iframe>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+    }
+
+    function validateForm() {
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim();
+      if (name.length < 3 || message.length < 5) {
+        alert("Please fill all fields correctly.");
+        return false;
+      }
+      return true;
+    }
+
+    function copyEmail() {
+      const email = document.getElementById('emailCopy').textContent;
+      navigator.clipboard.writeText(email).then(() => alert("Email copied to clipboard!"));
+    }
+
+    function toggleFAQ(item) {
+      const p = item.querySelector("p");
+      const isOpen = p.style.display === "block";
+      document.querySelectorAll('.faq-item p').forEach(el => el.style.display = 'none');
+      p.style.display = isOpen ? 'none' : 'block';
+    }
+
+    // Welcome text animation
+    const welcome = document.getElementById('welcome');
+    let text = welcome.textContent;
+    let i = 0;
+    welcome.textContent = '';
+    (function type() {
+      if (i < text.length) {
+        welcome.innerHTML += text.charAt(i);
+        i++;
+        setTimeout(type, 70);
+      }
+    })();
+  </script>
+
+</body>
+</html>

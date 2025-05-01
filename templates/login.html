@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - Bank</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      transition: background 0.3s, color 0.3s;
+      background-color: #f9f9f9;
+    }
+    header {
+      background: navy;
+      color: white;
+      padding: 10px;
+      text-align: center;
+    }
+    nav {
+      background-color: #f2f2f2;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      padding: 10px;
+    }
+    nav a {
+      text-decoration: none;
+      color: navy;
+      font-weight: bold;
+    }
+    #carousel {
+      position: relative;
+      width: 100%;
+      height: 250px;
+      overflow: hidden;
+    }
+    #carousel img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      display: none;
+    }
+    #carousel img.active {
+      display: block;
+    }
+    section {
+      padding: 20px;
+      text-align: center;
+    }
+    .dark-mode {
+      background: #121212;
+      color: white;
+    }
+    button {
+      padding: 8px 16px;
+      background-color: navy;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .login-container {
+      max-width: 400px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .login-container h2 {
+      margin-bottom: 10px;
+    }
+    .login-container input[type="text"],
+    .login-container input[type="email"],
+    .login-container input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .login-container label {
+      float: left;
+      margin-top: 10px;
+    }
+    .password-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .password-container input {
+      width: 80%;
+    }
+    .password-container button {
+      background: none;
+      border: none;
+      color: #007bff;
+      cursor: pointer;
+    }
+    .remember-forgot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0;
+    }
+    .login-container button[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      background-color: #28a745;
+      font-size: 16px;
+    }
+    .login-container button:hover {
+      background-color: #218838;
+    }
+    .error-message {
+      color: red;
+      text-align: center;
+      margin-top: 10px;
+    }
+    .captcha-box {
+      margin-top: 15px;
+      padding: 8px;
+      background: #e9e9e9;
+      text-align: center;
+      border-radius: 5px;
+    }
+    .dark-mode .captcha-box {
+      background: #2a2a2a;
+    }
+    @media screen and (max-width: 600px) {
+      nav {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1 id="welcome">Welcome to Secure Banking Login</h1>
+  </header>
+
+  <nav>
+    <a href="/">Home</a>
+    <a href="/about">About</a>
+    <a href="/admin">Admin</a>
+    <a href="/client">Client</a>
+    <a href="/complaint">Complaint</a>
+    <a href="/deposit">Deposit</a>
+    <a href="/history">History</a>
+    <a href="/login">Login</a>
+    <a href="/services">Services</a>
+    <a href="/withdraw">Withdraw</a>
+    <a href="/contact">Contact</a>
+  </nav>
+
+  <div id="carousel">
+    <img src="static/images/login1.png" class="active" alt="Slide 1">
+    <img src="static/images/login2.png" class="active" alt="Slide 2">
+    <img src="static/images/login3.png" class="active" alt="Slide 3">
+  </div>
+
+  <section>
+    <p>Secure access to your account with industry-standard encryption and 2FA support.</p>
+    <button onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
+  </section>
+
+  <div class="login-container">
+    <h2>Login to Your Bank Account</h2>
+    <form method="POST" action="/login">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <ul>
+            {% for category, message in messages %}
+              <li class="error-message">{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+
+      <input type="text" name="username" placeholder="Username or Email" required>
+
+      <div class="password-container">
+        <input type="password" id="password" name="password" placeholder="Password" required>
+        <button type="button" id="showPassword">Show</button>
+      </div>
+
+      <div class="remember-forgot">
+        <label><input type="checkbox" name="remember"> Remember Me</label>
+        <a href="/forgot-password">Forgot Password?</a>
+      </div>
+
+      <div class="captcha-box">
+        [CAPTCHA Placeholder] <!-- You can integrate Google reCAPTCHA here -->
+      </div>
+
+      <button type="submit">🔐 Login</button>
+    </form>
+  </div>
+
+  <script>
+    // Carousel functionality
+    let index = 0;
+    const images = document.querySelectorAll('#carousel img');
+
+    function showNextImage() {
+      images[index].classList.remove('active');
+      index = (index + 1) % images.length;
+      images[index].classList.add('active');
+    }
+    setInterval(showNextImage, 3000);
+
+    // Dark mode toggle
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+    }
+
+    // Typing effect for header
+    const welcome = document.getElementById('welcome');
+    const welcomeText = welcome.textContent;
+    welcome.innerHTML = '';
+    let i = 0;
+    function typeWelcome() {
+      if (i < welcomeText.length) {
+        welcome.innerHTML = welcomeText.slice(0, i + 1);
+        i++;
+        setTimeout(typeWelcome, 80);
+      }
+    }
+    typeWelcome();
+
+    // Page alert
+    window.onload = () => {
+      setTimeout(() => {
+        alert("🔔 You are now on the Secure Banking Login Page.");
+      }, 1000);
+    };
+
+    // Toggle password visibility
+    document.getElementById('showPassword').onclick = function () {
+      const passwordInput = document.getElementById('password');
+      const type = passwordInput.type === 'password' ? 'text' : 'password';
+      passwordInput.type = type;
+      this.textContent = type === 'password' ? 'Show' : 'Hide';
+    };
+  </script>
+
+</body>
+</html>

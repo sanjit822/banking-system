@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Transaction History - MyBank</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      transition: background 0.3s, color 0.3s;
+    }
+    header {
+      background-color: navy;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    .navbar a {
+      font-weight: bold;
+      color: navy !important;
+    }
+    .carousel img {
+      height: 250px;
+      object-fit: cover;
+    }
+    .dark-mode {
+      background-color: #121212 !important;
+      color: white !important;
+    }
+    .dark-mode table, .dark-mode thead {
+      color: white;
+    }
+    .dark-mode td {
+      background-color: #1e1e1e;
+    }
+    .filter-section input, .filter-section select {
+      margin: 5px;
+    }
+    .summary {
+      margin: 10px 0;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h2 id="welcome">Welcome to Transaction History</h2>
+</header>
+
+<nav class="navbar navbar-expand-md bg-light py-2 justify-content-center">
+  <a href="/">Home</a>
+  <a href="/about">About</a>
+  <a href="/admin">Admin</a>
+  <a href="/client">Client</a>
+  <a href="/complaint">Complaint</a>
+  <a href="/deposit">Deposit</a>
+  <a href="/history">History</a>
+  <a href="/login">Login</a>
+  <a href="/services">Services</a>
+  <a href="/withdraw">Withdraw</a>
+  <a href="/contact">Contact</a>
+</nav>
+
+<!-- Carousel -->
+<div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="static/images/history1.png" class="d-block w-100" alt="History1">
+    </div>
+    <div class="carousel-item">
+      <img src="static/images/history2.png" class="d-block w-100" alt="History2">
+    </div>
+    <div class="carousel-item">
+      <img src="static/images/history3.png" class="d-block w-100" alt="History3">
+    </div>
+  </div>
+</div>
+
+<div class="container my-4">
+
+  <div class="filter-section text-center">
+    <input type="text" id="accountFilter" class="form-control d-inline w-25" placeholder="Enter Account Number"/>
+    <input type="date" id="startDate" class="form-control d-inline w-20"/>
+    <input type="date" id="endDate" class="form-control d-inline w-20"/>
+    <button class="btn btn-primary" onclick="filterHistory()">Filter</button>
+    <button class="btn btn-secondary" onclick="toggleDarkMode()">Dark Mode</button>
+    <button class="btn btn-success" onclick="downloadPDF()">Download PDF</button>
+  </div>
+
+  <div class="summary text-center">
+    <span>Total Credit: ₹<span id="totalCredit">0</span></span> | 
+    <span>Total Debit: ₹<span id="totalDebit">0</span></span> | 
+    <span>Balance: ₹<span id="balance">0</span></span>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped" id="historyTable">
+      <thead class="table-dark">
+        <tr>
+          <th>Account Number</th>
+          <th>Amount</th>
+          <th>Type</th>
+          <th>Date</th>
+          <th>Note</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  const transactions = [
+    { account_number: "12345", amount: 5000, type: "deposit", timestamp: "2025-04-20 12:00", note: "Salary" },
+    { account_number: "12345", amount: 2000, type: "withdrawal", timestamp: "2025-04-19 14:30", note: "ATM Withdrawal" },
+    { account_number: "67890", amount: 3000, type: "deposit", timestamp: "2025-04-18 11:00", note: "Bonus" },
+    // Add more sample transactions here
+  ];
+
+  const tableBody = document.querySelector("#historyTable tbody");
+
+  function loadHistory(data) {
+    tableBody.innerHTML = "";
+    let totalCredit = 0, totalDebit = 0;
+
+    data.forEach(t => {
+      if (t.type === "deposit") totalCredit += t.amount;
+      else if (t.type === "withdrawal") totalDebit += t.amount;
+
+      tableBody.innerHTML += ` 
+        <tr>
+          <td>${t.account_number}</td>
+          <td>₹${t.amount}</td>
+          <td>${t.type}</td>
+          <td>${t.timestamp}</td>
+          <td>${t.note}</td>
+        </tr>`;
+    });
+
+    document.getElementById("totalCredit").textContent = totalCredit;
+    document.getElementById("totalDebit").textContent = totalDebit;
+    document.getElementById("balance").textContent = totalCredit - totalDebit;
+  }
+
+  function filterHistory() {
+    const acc = document.getElementById("accountFilter").value.trim();
+    const start = document.getElementById("startDate").value;
+    const end = document.getElementById("endDate").value;
+
+    let filtered = transactions.filter(t => {
+      const matchAcc = acc ? t.account_number.includes(acc) : true;
+      const matchStart = start ? new Date(t.timestamp) >= new Date(start) : true;
+      const matchEnd = end ? new Date(t.timestamp) <= new Date(end) : true;
+      return matchAcc && matchStart && matchEnd;
+    });
+
+    loadHistory(filtered);
+  }
+
+  function toggleDarkMode() {
+    document.body.classList.toggle("dark-mode");
+  }
+
+  function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.text("Transaction History", 14, 20);
+    let y = 30;
+    transactions.forEach((t, i) => {
+      doc.text(`${i+1}) ${t.account_number} | ₹${t.amount} | ${t.type} | ${t.timestamp} | ${t.note}`, 14, y);
+      y += 10;
+    });
+    doc.save("Transaction_History.pdf");
+  }
+
+  // Welcome text animation
+  const welcome = document.getElementById('welcome');
+  let text = welcome.textContent, i = 0;
+  welcome.textContent = "";
+  (function type() {
+    if (i < text.length) {
+      welcome.textContent += text[i++];
+      setTimeout(type, 50);
+    }
+  })();
+
+  window.onload = () => {
+    alert("📄 You are now viewing Transaction History.");
+    loadHistory(transactions);
+  };
+</script>
+
+</body>
+</html>
